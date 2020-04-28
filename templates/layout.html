@@ -40,16 +40,9 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{url_for('static', filename='plugins/summernote/summernote-bs4.css')}}">
 
-    <style type="text/css">
-        .chart {
-            min-width: 320px;
-            max-width: 800px;
-            height: 220px;
-            margin: 0 auto;
-        }
-    </style>
-    <!--HIGHCHART GAUGE-->
     
+
+
     <script src="{{url_for('static', filename='plugins/code/highcharts.js')}}"></script>
     
     <script src="{{url_for('static', filename='plugins/code/highcharts-more.js')}}"></script>
@@ -57,6 +50,8 @@
     <script src="{{url_for('static', filename='plugins/code/modules/exporting.js')}}"></script>
     
     <script src="{{url_for('static', filename='plugins/code/modules/export-data.js')}}"></script>
+    
+    <script src="{{url_for('static', filename='plugins/charts/alarmas.js')}}"></script>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -117,6 +112,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/alarmas" class="nav-link">
+                                <i class="nav-icon fas fa-exclamation-triangle"></i>
+                                <p>
+                                    Alarmas
+                                </p>
+                                <span class="right badge badge-danger" id="alarmas"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/RegTec" class="nav-link">
                                 <i class="nav-icon fas fa-user-plus"></i>
                                 <p>
@@ -172,6 +176,8 @@
             {% block body %}
             {% endblock %}
             <script src="{{url_for('static', filename='plugins/charts/prueba.js')}}"></script>
+            <script src="{{url_for('static', filename='plugins/charts/prueba2.js')}}"></script>
+   
 </body>
 
 </html>

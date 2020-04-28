@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
 import json
-
+from time import time
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Frida123'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://javi:javiersolis12@localhost:3306/tuti'
@@ -87,7 +87,7 @@ class RegisterForm(FlaskForm):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', name = current_user.nombre, notificaciones = 0)
+    return render_template('index.html', name = current_user.nombre, notificaciones = 0, titulo = "DASHBOARD TUTI")
 
 @app.route('/datos', methods=["GET", "POST"])
 def data1():
@@ -103,7 +103,8 @@ def data1():
             datos.canal3,
             datos.canal4,
             datos.tempGabinete,
-            contador]
+            contador,
+            (time() - 14400) * 1000]
     response = make_response(json.dumps(data))
     response.content_type = 'application/json'
     return response
@@ -119,9 +120,9 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            return render_template('login.html', mensaje = 'Email o password incorrecto')            
+            return render_template('login.html', mensaje = 'Email o password incorrecto', titulo = "Iniciar Sesión")            
     else:
-        return render_template('login.html')
+        return render_template('login.html', titulo = "Iniciar Sesión")
 
 @app.route('/RegAdmin', methods=['GET', 'POST'])
 
@@ -138,22 +139,22 @@ def Registrar_Administradores():
                                     password = hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return render_template('registrar.html', form = form, mensaje = 'Se creo exitosamente el Administrador')
+        return render_template('registrar.html', form = form, mensaje = 'Se creo exitosamente el Administrador', titulo = "Registrar Administrador")
     else:
-        return render_template('registrar.html', form = form)
+        return render_template('registrar.html', form = form, titulo = "Registrar Administrador")
 
 @app.route('/VistaEmails', methods = ['GET', 'POST'])
 @login_required
 def VistaEmails():
     if request.method == 'GET':
         Tecnicos = tecnicos.query.all()
-        return render_template('VistaEmails.html', tecnicos = Tecnicos, name = current_user.nombre)
+        return render_template('VistaEmails.html', tecnicos = Tecnicos, name = current_user.nombre, titulo = "Enviar Email")
     else:
         msg = Message(request.form['asunto'], sender = 'ccmcomteco@gmail.com', recipients = request.form.getlist('emails'))
         msg.html = request.form['mensaje']
         mail.send(msg)
         Tecnicos = tecnicos.query.all()
-        return render_template('VistaEmails.html', mensaje = 'Se envio satisfactoriamente el email', name = current_user.nombre, tecnicos = Tecnicos)
+        return render_template('VistaEmails.html', mensaje = 'Se envio satisfactoriamente el email', name = current_user.nombre, tecnicos = Tecnicos, titulo = 'Enviar Emails')
 
 @app.route('/prueba')
 def prueba():
@@ -164,7 +165,7 @@ def prueba():
 def RegistroTecnicos():
     if request.method == 'GET':
         Todos_Tecnicos = tecnicos.query.all()
-        return render_template('VistaRegistro.html', tecnicos = Todos_Tecnicos, name = current_user.nombre)
+        return render_template('VistaRegistro.html', tecnicos = Todos_Tecnicos, name = current_user.nombre, titulo = "Registrar Técnicos")
     else:
         Nombre = request.form['nombre']
         Apellido = request.form['apellido']
@@ -175,7 +176,7 @@ def RegistroTecnicos():
         if Todos_Tecnicos:
             for tech in Todos_Tecnicos:
                 if tech.nombre == Nombre or tech.apellido == Apellido or tech.num_carnet == Num_carnet or tech.email == Email or tech.num_cel == Num_cel:
-                    return render_template('VistaRegistro.html', msg = 'No se pudo registrar, Datos ya utilizados', name = current_user.nombre)
+                    return render_template('VistaRegistro.html', msg = 'No se pudo registrar, Datos ya utilizados', name = current_user.nombre, titulo = "Registrar Técnicos", tecnicos = Todos_Tecnicos)
                 else:
                     nuevo_Tecnico = tecnicos(
                                                 nombre = request.form['nombre'],
@@ -185,7 +186,8 @@ def RegistroTecnicos():
                                                 num_cel = request.form['celular'])
                     db.session.add(nuevo_Tecnico)
                     db.session.commit()
-                    return render_template('VistaRegistro.html', mensaje = 'Se agrego satisfactoriamente el Técnico', name = current_user.nombre)
+                    todos_Tecnicos = tecnicos.query.all()
+                    return render_template('VistaRegistro.html', mensaje = 'Se agrego satisfactoriamente el Técnico', name = current_user.nombre, titulo = "Registrar Técnicos", tecnicos = todos_Tecnicos)
         else:
             nuevo_Tecnico = tecnicos(
                                                 nombre = request.form['nombre'],
@@ -196,7 +198,7 @@ def RegistroTecnicos():
             db.session.add(nuevo_Tecnico)
             db.session.commit()
             Todos_Tecnicos = tecnicos.query.all()
-            return render_template('VistaRegistro.html', mensaje = 'Se agrego satisfactoriamente el Técnico', name = current_user.nombre, tecnicos = Todos_Tecnicos)
+            return render_template('VistaRegistro.html', mensaje = 'Se agrego satisfactoriamente el Técnico', name = current_user.nombre, tecnicos = Todos_Tecnicos, titulo = "Registrar Técnicos")
 
 
 
@@ -212,6 +214,18 @@ def delete(id):
     tecnicos.query.filter_by(id=int(id)).delete()
     db.session.commit()
     return redirect(url_for('RegistroTecnicos'))
+
+@app.route('/alarmas')
+@login_required
+def Alarmas():
+    Alarmas = alarmas.query.filter_by(estado='activo').all()
+    return render_template('alarmas.html', alm = Alarmas, titulo = "Alarmas")
+
+@app.errorhandler(404)
+def not_found(e):
+    Alarmas = alarmas.query.filter_by(estado='activo').all()
+    return render_template("404.html", titulo = "Error 404 No encontrado")
+    
     
 
 if __name__ == '__main__':

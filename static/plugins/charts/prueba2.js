@@ -1,122 +1,115 @@
-function requestData() {
-    // Ajax call to get the Data from Flask
-    var requests = $.get('/datos');
-    var tm = requests.done(function (result) {
-                console.log(result[0]);
+var chartTemperatue;
+var chartHumidity;
+
+        function requestData() {
+            // Ajax call to get the Data from Flask
+            var requests = $.get('/datos');
+
+            var tm = requests.done(function (result) {
+                //alarmas
+                
+                // Temperature
+                var seriesTemperature = chartTemperatue.series[0],
+                    shiftTemperature = seriesTemperature.data.length > 20;
+
+                // Humidity
+                var seriesHumidity = chartHumidity.series[0],
+                    shiftHumidity = seriesTemperature.data.length > 20;
+
+                // Add the Point
+                // Time Temperature\
+                var data1 = [];
+                data1.push(result[8]);
+                data1.push(result[2]);
+
+
+                // Add the Point
+                // Time Humidity
+                var data2 = [];
+                data2.push(result[8]);
+                data2.push(result[3]);
+
+
+                chartTemperatue.series[0].addPoint(data1, true, shiftTemperature);
+                chartHumidity.series[0].addPoint(data2, true, shiftHumidity);
+                
+                
+               
+                
+                // call it again after one second
+                setTimeout(requestData, 5000);
             });
-    
-}
-requestData();
+        }
 
-$(function () {
-
-    $('#container').highcharts({
-
-        chart: {
-            type: 'gauge',
-            plotBackgroundColor: null,
-            plotBackgroundImage: null,
-            plotBorderWidth: 0,
-            plotShadow: false
-        },
-
-        title: {
-            text: 'StroomVerbruik'
-        },
-
-        pane: {
-            startAngle: -150,
-            endAngle: 150,
-            background: [{
-                backgroundColor: {
-                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                    stops: [
-                        [0, '#FFF'],
-                        [1, '#333']
-                    ]
+        $(document).ready(function () {
+            // --------------Chart 1 ----------------------------
+            chartTemperatue = new Highcharts.Chart({
+                chart:
+                {
+                    renderTo: 'data-temperature',
+                    defaultSeriesType: 'spline',
+                    events: {
+                        load: requestData
+                    }
                 },
-                borderWidth: 0,
-                outerRadius: '109%'
-            }, {
-                backgroundColor: {
-                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                    stops: [
-                        [0, '#333'],
-                        [1, '#FFF']
-                    ]
+                title:
+                {
+                    text: 'Potencia de Recepcion Principal'
                 },
-                borderWidth: 1,
-                outerRadius: '107%'
-            }, {
-                // default background
-            }, {
-                backgroundColor: '#DDD',
-                borderWidth: 0,
-                outerRadius: '105%',
-                innerRadius: '103%'
-            }]
-        },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    maxZoom: 20 * 1000
+                },
+                yAxis: {
+                    minPadding: 0.2,
+                    maxPadding: 0.2,
+                    title: {
+                        text: 'Voltaje',
+                        margin: 80
+                    }
+                },
+                series: [{
+                    color: '#c23d23',
+                    lineColor: '#303030',
+                    name: 'Potencia Recibida',
+                    data: []
+                }]
+            });
+            // --------------Chart 1 Ends - -----------------
 
-        // the value axis
-        yAxis: {
-            min: 0,
-            max: 6000,
+            chartHumidity = new Highcharts.Chart({
+                chart:
+                {
+                    renderTo: 'data-humidity',
+                    defaultSeriesType: 'spline',
+                    events: {
+                        load: requestData
+                    }
+                },
+                title:
+                {
+                    text: 'Potencia de Recepcion Secundaria'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    tickPixelInterval: 150,
+                    maxZoom: 20 * 1000
+                },
+                yAxis: {
+                    minPadding: 0.2,
+                    maxPadding: 0.2,
+                    title: {
+                        text: 'Voltaje',
+                        margin: 80
+                    }
+                },
+                series: [{
+                    lineColor: '#1d82b8',
+                    name: 'Potencia Recibida',
+                    data: []
+                }]
+            });
 
-            minorTickInterval: 'auto',
-            minorTickWidth: 1,
-            minorTickLength: 10,
-            minorTickPosition: 'inside',
-            minorTickColor: '#666',
 
-            tickPixelInterval: 30,
-            tickWidth: 2,
-            tickPosition: 'inside',
-            tickLength: 10,
-            tickColor: '#666',
-            labels: {
-                step: 2,
-                rotation: 'auto'
-            },
-            title: {
-                text: 'Watt'
-            },
-            plotBands: [{
-                from: 0,
-                to: 1500,
-                color: '#55BF3B' // green
-            }, {
-                from: 1500,
-                to: 3000,
-                color: '#DDDF0D' // yellow
-            }, {
-                from: 3000,
-                to: 6000,
-                color: '#DF5353' // red
-            }]
-        },
-
-        series: [{
-            name: 'Huidig verbruik',
-            data: [0],
-            tooltip: {
-                valueSuffix: ' Watt'
-            }
-        }]
-
-    },
-        // Add some life
-        function (chart) {
-			if (!chart.renderer.forExport) {
-                setInterval(function () {
-                    var point = chart.series[0].points[0],
-					newVal,
-					inc = 7;
-				
-				newVal = inc;
-				
-				point.update(newVal);
-				
-                }, 1000);
-			}
         });
-});
