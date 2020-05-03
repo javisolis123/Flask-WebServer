@@ -9,6 +9,9 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_mail import Mail, Message
 import json
 from time import time
+import numpy as np
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Frida123'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://javi:javiersolis12@localhost:3306/tuti'
@@ -66,7 +69,29 @@ class alarmas(UserMixin, db.Model):
     estado = db.Column(db.String(10))
     estado_email = db.Column(db.String(20))
 
-    
+class todo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    temperatura = db.Column(db.Float())
+    humedad = db.Column(db.Float())
+    canal1 = db.Column(db.Float())
+    canal2 = db.Column(db.Float())
+    canal3 = db.Column(db.Float())
+    canal4 = db.Column(db.Float())
+    tempGabinete = db.Column(db.Float())
+    hora = db.Column(db.Time())
+    fecha = db.Column(db.Date())
+
+class regresion(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    x1 = db.Column(db.Float())
+    x2 = db.Column(db.Float())
+    y = db.Column(db.Float())
+    xx = db.Column(db.Float())
+    x1y = db.Column(db.Float())
+    x2y = db.Column(db.Float())
+    x1x2 = db.Column(db.Float())
+    x2x2 = db.Column(db.Float())
+    yy = db.Column(db.Float())
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -108,6 +133,45 @@ def data1():
     response = make_response(json.dumps(data))
     response.content_type = 'application/json'
     return response
+
+@app.route('/datosJSON/<fec>/', methods=['GET', 'POST'])
+def ValoresJson(fec):
+    xData = []
+    data0 = []
+    data1 = []
+    data2 = []
+    SalidaDatos = {}
+    Datos = todo.query.filter_by(fecha=fec).all()
+    for dato in Datos:
+        aux = dato.hora
+        NumeroHoras = int(aux.hour) + (int(aux.minute) / 100)
+        xData.append(NumeroHoras)
+        data0.append(dato.canal1)
+        data1.append(dato.temperatura)
+        data2.append(dato.humedad)
+    SalidaDatos = {
+        "xData": xData,
+        "datasets": [{
+            "name": "Potencia Recepción",
+            "data": data0,
+            "unit": "[V]",
+            "type": "line",
+            "valueDecimals": 1
+        }, {
+            "name": "Temperatura",
+            "data": data1,
+            "unit": "°C",
+            "type": "line",
+            "valueDecimals": 0
+        }, {
+            "name": "Humedad",
+            "data": data2,
+            "unit": "%",
+            "type": "line",
+            "valueDecimals": 0
+        }]
+    }
+    return jsonify(SalidaDatos)
 
 
 @app.route('/login', methods=['GET','POST'])
@@ -200,8 +264,6 @@ def RegistroTecnicos():
             Todos_Tecnicos = tecnicos.query.all()
             return render_template('VistaRegistro.html', mensaje = 'Se agrego satisfactoriamente el Técnico', name = current_user.nombre, tecnicos = Todos_Tecnicos, titulo = "Registrar Técnicos")
 
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -219,13 +281,69 @@ def delete(id):
 @login_required
 def Alarmas():
     Alarmas = alarmas.query.filter_by(estado='activo').all()
-    return render_template('alarmas.html', alm = Alarmas, titulo = "Alarmas")
+    return render_template('alarmas.html', alm = Alarmas, titulo = "Alarmas", name = current_user.nombre)
+
+@app.route('/graf/diarios')
+@login_required
+def GraDiarios():
+    return render_template('diarios.html', titulo = "Gráficos Díarios", name = current_user.nombre)
+
+@app.route('/graf/regresion')
+@login_required
+def Regresion():
+    sumatorias = [0,0,0,0,0,0,0,0,0,0]
+    cont = 0
+    DatosTemp = []
+    DatosHum = [] 
+    DatosTodo = todo.query.all()     
+    for dato in DatosTodo:
+        DatosTemp.append([dato.temperatura, dato.canal1]) 
+        DatosHum.append([dato.canal1, dato.humedad])
+        nuevaRegresion = regresion(
+                                    x1 = dato.temperatura,
+                                    x2 = dato.humedad,
+                                    y = dato.canal1,
+                                    xx = (dato.temperatura * dato.temperatura),
+                                    x1y = (dato.temperatura * dato.canal1),
+                                    x2y = (dato.humedad * dato.canal1),
+                                    x1x2 = (dato.temperatura * dato.humedad),
+                                    x2x2 = (dato.humedad * dato.humedad),
+                                    yy = (dato.canal1 * dato.canal1)
+        )
+        db.session.add(nuevaRegresion)
+    db.session.commit()
+    DatosRegresion = regresion.query.all()  
+    for i in DatosRegresion:
+        sumatorias = [
+                        sumatorias[0] + i.x1, 
+                        sumatorias[1] + i.x2,
+                        sumatorias[2] + i.y,
+                        sumatorias[3] + i.xx,
+                        sumatorias[4] + i.x1y,
+                        sumatorias[5] + i.x2y,
+                        sumatorias[6] + i.x1x2,
+                        sumatorias[7] + i.x2x2,
+                        sumatorias[8] + i.yy
+                    ]
+        cont += 1
+    A = np.array([
+        [cont,sumatorias[0],sumatorias[1]],
+        [sumatorias[0],sumatorias[3],sumatorias[6]],
+        [sumatorias[1],sumatorias[6],sumatorias[7]]
+    ])
+    R = np.array([
+        [sumatorias[2]],
+        [sumatorias[4]],
+        [sumatorias[5]]
+    ])
+    A_inversa = np.linalg.inv(A)
+    Matriz_Resultado = np.dot(A_inversa,R)
+    return render_template('regresion.html', titulo = "Regresion Lineal", name = current_user.nombre, temp = DatosTemp, hum = DatosHum, sumas = sumatorias, cont = cont, resp = Matriz_Resultado)
 
 @app.errorhandler(404)
 def not_found(e):
     Alarmas = alarmas.query.filter_by(estado='activo').all()
-    return render_template("404.html", titulo = "Error 404 No encontrado")
-    
+    return render_template("404.html", titulo = "Error 404 No encontrado", name = current_user.nombre)   
     
 
 if __name__ == '__main__':

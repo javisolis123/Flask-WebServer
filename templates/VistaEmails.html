@@ -34,7 +34,7 @@
                             <select class="select2" multiple="multiple" data-placeholder="Seleccione Email(s)"
                                 style="width: 100%;" name="emails" id="multiple">
                                 {% for tecnico in tecnicos %}
-                                <option value="{{tecnico.email}}">{{tecnico.email}}</option>
+                                <option value="{{tecnico.email}}">{{tecnico.nombre}} {{ tecnico.apellido }}</option>
                                 {% endfor %}
                             </select>
                         </div>
