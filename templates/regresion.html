@@ -10,7 +10,10 @@
                 <!-- right column -->
                 <div class="col-md-12">
                     <div class="card">
-                        <div id="container"></div>
+                        <div class="card-body" id="container">
+                      
+                    </div>
+                        
                         <script type="text/javascript">
                             Highcharts.chart('container', {
                                 chart: {
@@ -84,78 +87,108 @@
                     <!-- /.card -->
                 </div>
                 <!--/.col (right) -->
+                <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Alarmas Activadas</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <div class="btn-group">
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>id</th>
-                                    <th>x1</th>
-                                    <th>x2</th>
-                                    <th>y</th>
-                                    <th>xx</th>
-                                    <th>x1y</th>
-                                    <th>x2y</th>
-                                    <th>x1x2</th>
-                                    <th>x2x2</th>
-                                    <th>yy</th>
-                                    <th>n</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                
-                                <tr>
-                                    <td> 1 </td>
-                                    <td> {{ sumas.0 }} </td>
-                                    <td> {{ sumas.1 }} </td>
-                                    <td> {{ sumas.2 }} </td>
-                                    <td> {{ sumas.3 }} </td>
-                                    <td> {{ sumas.4 }} </td>
-                                    <td> {{ sumas.5 }} </td>
-                                    <td> {{ sumas.6 }} </td>
-                                    <td> {{ sumas.7 }} </td>
-                                    <td> {{ sumas.8 }} </td>  
-                                    <td> {{ cont }} </td>                                    
-                                </tr>
-                                
-                            </tbody>
-                        </table>
+                        <form action="/graf/regresion" method="post">
+                            <div class="form-group">
+                                <input type="text" name="temperatura" class="form-control" placeholder="Temperatura">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="humedad" class="form-control" placeholder="Humedad">
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" name="ESTIMAR" class="form-control btn-primary" value="ESTIMAR">
+                            </div>
+                            <div class="form-group">
+                                <label>ecuacion</label>
+                            </div>
+                        </form>
                     </div>
                     <!-- /.card-body -->
                 </div>
-
+            </div>
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Alarmas Activadas</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <div class="btn-group">
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>id</th>
-                                    <th>x1</th>
-                                    <th>x2</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                
-                                <tr>
-                                    <td> 1 </td>
-                                    <td> {{ resp.0 }} </td>
-                                    <td> {{ resp.1 }} </td>
-                                    <td> {{ resp.2 }} </td>                                   
-                                </tr>
-                                
-                            </tbody>
-                        </table>
+                        {% if  aux != 0%}
+                            {% if determinante != 0 %}
+                                <div class="form-group">
+                                    <label>Promedio Temperatura (X1): </label>
+                                    {{ x1_prom }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Promedio Humedad (X2): </label>
+                                    {{ x2_prom }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Promedio Potencia de Recepción (Y): </label>
+                                    {{ y_prom }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Temperatura: </label>
+                                    {{ tempe }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Humedad: </label>
+                                    {{ hume }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Ecuacion Cálculada: </label>
+                                    y = {{ resp.0 }} + {{ resp.1 }}X1 + {{ resp.2 }}X2
+                                </div>
+                                <div class="form-group">
+                                    <label>Resultado: </label>
+                                    {{ result_aproximado }}
+                                </div>
+                                {% if porcentaje != 0 %}
+                                    <div class="form-group">
+                                        <label>Probabilidad: </label>
+                                        {{ porcentaje }}
+                                    </div>
+                                {% endif %}
+                                {% if porcentaje == 0 %}
+                                    <div class="form-group">
+                                        <label>No Existen coincidencias</label>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% if determinante == 0 %}
+                                <div class="form-group">
+                                    <h1>No tiene Solución</h1>
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     <!-- /.card-body -->
                 </div>
+            </div>
             </div>
             <!-- /.row -->
         </div><!-- /.container-fluid -->

@@ -288,57 +288,115 @@ def Alarmas():
 def GraDiarios():
     return render_template('diarios.html', titulo = "Gráficos Díarios", name = current_user.nombre)
 
-@app.route('/graf/regresion')
+@app.route('/graf/regresion', methods = ['GET','POST'])
 @login_required
 def Regresion():
+    regresion.query.delete()
     sumatorias = [0,0,0,0,0,0,0,0,0,0]
     cont = 0
     DatosTemp = []
-    DatosHum = [] 
-    DatosTodo = todo.query.all()     
+    DatosHum = []
+    #Seleccionamos todos los datos de la tabla todo
+    DatosTodo = todo.query.all()
+    #Hacemos la insercion de los datos para la regrion en dicha tabla
     for dato in DatosTodo:
+        #Creamos dos listas DatosTemp y DatosHum para devolver a la vista
         DatosTemp.append([dato.temperatura, dato.canal1]) 
         DatosHum.append([dato.canal1, dato.humedad])
-        nuevaRegresion = regresion(
-                                    x1 = dato.temperatura,
-                                    x2 = dato.humedad,
-                                    y = dato.canal1,
-                                    xx = (dato.temperatura * dato.temperatura),
-                                    x1y = (dato.temperatura * dato.canal1),
-                                    x2y = (dato.humedad * dato.canal1),
-                                    x1x2 = (dato.temperatura * dato.humedad),
-                                    x2x2 = (dato.humedad * dato.humedad),
-                                    yy = (dato.canal1 * dato.canal1)
-        )
-        db.session.add(nuevaRegresion)
-    db.session.commit()
-    DatosRegresion = regresion.query.all()  
-    for i in DatosRegresion:
-        sumatorias = [
-                        sumatorias[0] + i.x1, 
-                        sumatorias[1] + i.x2,
-                        sumatorias[2] + i.y,
-                        sumatorias[3] + i.xx,
-                        sumatorias[4] + i.x1y,
-                        sumatorias[5] + i.x2y,
-                        sumatorias[6] + i.x1x2,
-                        sumatorias[7] + i.x2x2,
-                        sumatorias[8] + i.yy
-                    ]
-        cont += 1
-    A = np.array([
-        [cont,sumatorias[0],sumatorias[1]],
-        [sumatorias[0],sumatorias[3],sumatorias[6]],
-        [sumatorias[1],sumatorias[6],sumatorias[7]]
-    ])
-    R = np.array([
-        [sumatorias[2]],
-        [sumatorias[4]],
-        [sumatorias[5]]
-    ])
-    A_inversa = np.linalg.inv(A)
-    Matriz_Resultado = np.dot(A_inversa,R)
-    return render_template('regresion.html', titulo = "Regresion Lineal", name = current_user.nombre, temp = DatosTemp, hum = DatosHum, sumas = sumatorias, cont = cont, resp = Matriz_Resultado)
+    #Metodo GET
+    if request.method == 'GET':
+        return render_template('regresion.html', titulo = "Regresion Lineal", name = current_user.nombre, temp = DatosTemp, hum = DatosHum, aux = 0)
+    #Metodo POST
+    else:
+        cantidad = 0
+        #Recolectamos los datos de temperatura y humedad de la vista
+        temp = request.form['temperatura']
+        hum = request.form['humedad']
+        #Hacemos la insercion de los datos para la regrion en dicha tabla
+        for dato in DatosTodo:
+            nuevaRegresion = regresion(
+                                        x1 = dato.temperatura,
+                                        x2 = dato.humedad,
+                                        y = dato.canal1,
+                                        xx = (dato.temperatura * dato.temperatura),
+                                        x1y = (dato.temperatura * dato.canal1),
+                                        x2y = (dato.humedad * dato.canal1),
+                                        x1x2 = (dato.temperatura * dato.humedad),
+                                        x2x2 = (dato.humedad * dato.humedad),
+                                        yy = (dato.canal1 * dato.canal1)
+            )
+            db.session.add(nuevaRegresion)
+        #Confirmamos la insercion de los datos
+        db.session.commit()
+        #Seleccionamos todas las filas de la tabla regresion que fueron llenadas previamente
+        DatosRegresion = regresion.query.all() 
+        #Hacemos la Sumatoria de todas las columnas en una lista llamada sumatorias
+        for i in DatosRegresion:
+            sumatorias = [
+                            sumatorias[0] + i.x1, 
+                            sumatorias[1] + i.x2,
+                            sumatorias[2] + i.y,
+                            sumatorias[3] + i.xx,
+                            sumatorias[4] + i.x1y,
+                            sumatorias[5] + i.x2y,
+                            sumatorias[6] + i.x1x2,
+                            sumatorias[7] + i.x2x2,
+                            sumatorias[8] + i.yy
+                        ]
+            cont += 1
+        #Creamos la matriz A donde estan las incognitas
+        A = np.array([
+            [cont,sumatorias[0],sumatorias[1]],
+            [sumatorias[0],sumatorias[3],sumatorias[6]],
+            [sumatorias[1],sumatorias[6],sumatorias[7]]
+        ])
+        #Creamos la matriz resultado
+        R = np.array([
+            [sumatorias[2]],
+            [sumatorias[4]],
+            [sumatorias[5]]
+        ])
+        A_determinante = np.linalg.det(A)
+        #Si el determinante de A es diferente de cero el sistema de ecuaciones tiene solución
+        if A_determinante != 0:
+            #Calculamos la matriz inversa
+            A_inversa = np.linalg.inv(A)
+            #Multiplicamos la matriz inversa de A con la matriz resultados
+            Matriz_Resultado = np.dot(A_inversa,R)
+            resp_aprox = round(Matriz_Resultado[0][0] + (Matriz_Resultado[1][0] * float(temp)) + (Matriz_Resultado[2][0] * float(hum)), 3)
+        else:
+            #Si la determinante es cero el sistema no tiene Solución
+            A_inversa = 0
+            Matriz_Resultado = 0
+        FiltroDatos = todo.query.filter_by(temperatura = float(temp), humedad = float(hum)).all()
+        aux1 = 0
+        for x in FiltroDatos:
+            if round(x.canal1,2) == round(resp_aprox,2):
+                aux1 += 1    
+            cantidad += 1
+        if cantidad == 0:
+            porcentaje = 0
+        else:
+            porcentaje = (aux1 / cantidad) * 100
+        return render_template(
+            'regresion.html',
+            titulo = "Regresion Lineal",
+            name = current_user.nombre,
+            temp = DatosTemp,
+            hum = DatosHum,
+            sumas = sumatorias,
+            resp = Matriz_Resultado,
+            x1_prom = round((sumatorias[0] / cont), 3),
+            x2_prom = round((sumatorias[1] / cont), 3),
+            y_prom = round((sumatorias[2]),3),
+            tempe = temp,
+            hume = hum,
+            determinante = A_determinante,
+            aux = 1,
+            result_aproximado = resp_aprox,
+            porcentaje = porcentaje
+            )
+
 
 @app.errorhandler(404)
 def not_found(e):

@@ -10,16 +10,10 @@ setInterval(function () {
                   if(respuesta[7]>0){
                       
                       $("#alarmas").html(respuesta[7]);
+                  }else{
+                    $("#alarmas").html('');
                   }
-                     //var registros =  JSON.parse(respuesta);
-                     var temp = Number(respuesta[0]);
-      var point = chart.series[0].points[0],
-          newVal,
-
-      newVal = temp;
-      
-
-      point.update(newVal);
+                    
     
               }
                          
