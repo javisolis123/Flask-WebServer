@@ -40,17 +40,17 @@
     <!-- summernote -->
     <link rel="stylesheet" href="{{url_for('static', filename='plugins/summernote/summernote-bs4.css')}}">
 
-    
+
 
 
     <script src="{{url_for('static', filename='plugins/code/highcharts.js')}}"></script>
-    
+
     <script src="{{url_for('static', filename='plugins/code/highcharts-more.js')}}"></script>
-    
+
     <script src="{{url_for('static', filename='plugins/code/modules/exporting.js')}}"></script>
-    
+
     <script src="{{url_for('static', filename='plugins/code/modules/export-data.js')}}"></script>
-    
+
     <script src="{{url_for('static', filename='plugins/charts/alarmas.js')}}"></script>
 </head>
 
@@ -95,6 +95,7 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+                        <li class="nav-header">TUTI</li>
                         <li class="nav-item">
                             <a href="/" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -130,42 +131,74 @@
                         </li>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
-                              <i class="nav-icon fas fa-chart-pie"></i>
-                              <p>
-                                Gráficos
-                                <i class="right fas fa-angle-left"></i>
-                              </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                <a href="/graf/diarios" class="nav-link">
-                                  <i class="nav-icon fas fa-chart-line"></i>
-                                  <p>Diarios</p>
-                                </a>
-                              </li>
-                              <li class="nav-item">
-                                <a href="pages/charts/flot.html" class="nav-link">
-                                  <i class="far fa-chart-bar nav-icon"></i>
-                                  <p>Mensuales</p>
-                                </a>
-                              </li>
-                              <li class="nav-item">
-                                <a href="/graf/regresion" class="nav-link">
-                                  <i class="far fa-chart-pie nav-icon"></i>
-                                  <p>Regresión Líneal</p>
-                                  <span class="right badge badge-danger">BETA</span>
-                                </a>
-                              </li>
-                            </ul>
-                          </li>
-                        <li class="nav-header">Configuración</li>
-                        <li class="nav-item">
-                            <a href="/configuracion" class="nav-link">
-                                <i class="nav-icon fas fa-cogs"></i>
+                                <i class="nav-icon fas fa-chart-pie"></i>
                                 <p>
-                                    Configuración
+                                    Gráficos
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/graf/diarios" class="nav-link">
+                                        <i class="nav-icon fas fa-chart-line"></i>
+                                        <p>Diarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="pages/charts/flot.html" class="nav-link">
+                                        <i class="far fa-chart-bar nav-icon"></i>
+                                        <p>Mensuales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/graf/regresion" class="nav-link">
+                                        <i class="far fa-chart-pie nav-icon"></i>
+                                        <p>Regresión Líneal</p>
+                                        <span class="right badge badge-danger">BETA</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-header">JUNO</li>
+                        <li class="nav-item">
+                            <a href="/cargardatos" class="nav-link">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Cargar Datos
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/dashjuno" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <p>
+                                    Gráficos
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/graf/juno" class="nav-link">
+                                        <i class="nav-icon fas fa-chart-line"></i>
+                                        <p>Diarios</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/graf/regresionjuno" class="nav-link">
+                                        <i class="far fa-chart-pie nav-icon"></i>
+                                        <p>Regresión Líneal</p>
+                                        <span class="right badge badge-danger">BETA</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-header">LOGOUT</li>
                         <li class="nav-item">
@@ -199,7 +232,15 @@
             {% endblock %}
             <script src="{{url_for('static', filename='plugins/charts/prueba.js')}}"></script>
             <script src="{{url_for('static', filename='plugins/charts/prueba2.js')}}"></script>
-   
+            <script
+                src="{{url_for('static', filename='plugins/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
+
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    bsCustomFileInput.init();
+                });
+            </script>
+
 </body>
 
 </html>

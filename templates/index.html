@@ -34,8 +34,8 @@
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-success elevation-1"><i class="fas fa-thermometer-empty"></i></span>
 
-                        <div id="gauge3" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
-                
+                    <div id="gauge3" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
+
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
@@ -49,9 +49,9 @@
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bolt"></i></span>
 
-                  
-                        <div id="gauge4" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
-                    
+
+                    <div id="gauge4" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
+
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
@@ -62,9 +62,9 @@
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bolt"></i></span>
 
-                    
-                        <div id="gauge5" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
-                   
+
+                    <div id="gauge5" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
+
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
@@ -78,7 +78,7 @@
                 <div class="info-box mb-3">
                     <span class="info-box-icon bg-success elevation-1"><i class="fas fa-list"></i></span>
 
-                   
+
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
@@ -112,7 +112,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div id="data-humidity"></div>
-                                
+
                                 <!-- /.chart-responsive -->
                             </div>
                         </div>
@@ -123,31 +123,405 @@
             <!-- ./card-body -->
         </div>
         <!-- /.card -->
-    </div>
-    <!-- /.col -->
-    </div>
-    <!-- /.row -->
-    <!-- TABLE: LATEST ORDERS -->
-    <div class="card">
-        <div class="card-header border-transparent">
-            <h3 class="card-title">Latest Orders</h3>
+        <div class="row">
+            <div class="col-12 col-sm-6  col-md-6">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-thermometer-empty"></i></span>
+                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bolt"></i></span>
+                    <div id="container" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container', {
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: 'Temperatura Vs Humedad Mensual'
+                            },
+                            subtitle: {
+                                text: 'JUNO'
+                            },
+                            xAxis: {
+                                categories: [
+                                    'Ene',
+                                    'Feb',
+                                    'Mar',
+                                    'Abr',
+                                    'May',
+                                    'Jun',
+                                    'Jul',
+                                    'Ago',
+                                    'Sep',
+                                    'Oct',
+                                    'Nov',
+                                    'Dic'
+                                ],
+                                crosshair: true
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: 'Temp °C, Humedad %'
+                                }
+                            },
+                            tooltip: {
+                                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                    '<td style="padding:0"><b>{point.y:.1f} °C y %</b></td></tr>',
+                                footerFormat: '</table>',
+                                shared: true,
+                                useHTML: true
+                            },
+                            plotOptions: {
+                                column: {
+                                    pointPadding: 0.2,
+                                    borderWidth: 0
+                                }
+                            },
+                            series: [{
+                                name: 'Temperatura',
+                                data: {{ temp }}
 
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                </button>
+                            }, {
+                                name: 'Humedad',
+                                data: {{ hum }}
+
+                            }, {
+                                name: 'Temp Gabinete',
+                                data: {{ TempGab }}
+
+                            }]
+                        });
+                    </script>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12 col-sm-6  col-md-6">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bolt"></i></span>
+
+                    <div id="container1" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container1', {
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                text: 'Tx recepcion mensual [V]'
+                            },
+                            subtitle: {
+                                text: 'Juno'
+                            },
+                            xAxis: {
+                                categories: ['En', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Voltios (V)'
+                                }
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: false
+                                }
+                            },
+                            series: [{
+                                name: 'Tx',
+                                data: {{ Tx }}
+                            }]
+                        });
+                    </script>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
             </div>
         </div>
+        <!-- /.row -->
+        <div class="row">
+            <!-- /.col -->
+            <div class="col-12 col-sm-6  col-md-6a">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-bolt"></i></span>
+                    <div id="container2" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container2', {
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                text: 'Tx recepcion últimas 24Hrs'
+                            },
+                            subtitle: {
+                                text: 'Juno'
+                            },
+                            xAxis: {
+                                categories: [
+                                    '00:00', '00:30',
+                                    '01:00', '01:30',
+                                    '02:00', '02:30',
+                                    '03:00', '03:30',
+                                    '04:00', '04:30',
+                                    '05:00', '05:30',
+                                    '06:00', '06:30',
+                                    '07:00', '07:30',
+                                    '08:00', '08:30',
+                                    '09:00', '09:30',
+                                    '10:00', '10:30',
+                                    '11:00', '11:30',
+                                    '12:00', '12:30',
+                                    '13:00', '13:30',
+                                    '14:00', '14:30',
+                                    '15:00', '15:30',
+                                    '16:00', '16:30',
+                                    '17:00', '17:30',
+                                    '18:00', '18:30',
+                                    '19:00', '19:30',
+                                    '20:00', '20:30',
+                                    '21:00', '21:30',
+                                    '22:00', '22:30',
+                                    '23:00', '23:30']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Voltios (V)'
+                                }
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: false
+                                }
+                            },
+                            series: [{
+                                name: 'Tx',
+                                data: {{ ultimasTx }}
+                            }]
+                        });
+                    </script>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <!-- /.col -->
+            <div class="col-12 col-sm-6  col-md-6">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-thermometer-empty"></i></span>
+                    <div id="container4" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container4', {
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                text: 'Temperatura últimas 24Hrs'
+                            },
+                            subtitle: {
+                                text: 'Juno'
+                            },
+                            xAxis: {
+                                categories: [
+                                    '00:00', '00:30',
+                                    '01:00', '01:30',
+                                    '02:00', '02:30',
+                                    '03:00', '03:30',
+                                    '04:00', '04:30',
+                                    '05:00', '05:30',
+                                    '06:00', '06:30',
+                                    '07:00', '07:30',
+                                    '08:00', '08:30',
+                                    '09:00', '09:30',
+                                    '10:00', '10:30',
+                                    '11:00', '11:30',
+                                    '12:00', '12:30',
+                                    '13:00', '13:30',
+                                    '14:00', '14:30',
+                                    '15:00', '15:30',
+                                    '16:00', '16:30',
+                                    '17:00', '17:30',
+                                    '18:00', '18:30',
+                                    '19:00', '19:30',
+                                    '20:00', '20:30',
+                                    '21:00', '21:30',
+                                    '22:00', '22:30',
+                                    '23:00', '23:30']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Centigradors (°C)'
+                                }
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: false
+                                }
+                            },
+                            series: [{
+                                name: 'Tx',
+                                data: {{ ultimasTemp }}
+                            }]
+                        });
+                    </script>
+
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <!-- fix for small devices only -->
+            <div class="clearfix hidden-md-up"></div>
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <!-- /.col -->
+            <div class="col-12 col-sm-6  col-md-6a">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-thermometer-empty"></i></span>
+                    <div id="container3" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container3', {
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                text: 'Humedad últimas 24Hrs'
+                            },
+                            subtitle: {
+                                text: 'Juno'
+                            },
+                            xAxis: {
+                                categories: [
+                                    '00:00', '00:30',
+                                    '01:00', '01:30',
+                                    '02:00', '02:30',
+                                    '03:00', '03:30',
+                                    '04:00', '04:30',
+                                    '05:00', '05:30',
+                                    '06:00', '06:30',
+                                    '07:00', '07:30',
+                                    '08:00', '08:30',
+                                    '09:00', '09:30',
+                                    '10:00', '10:30',
+                                    '11:00', '11:30',
+                                    '12:00', '12:30',
+                                    '13:00', '13:30',
+                                    '14:00', '14:30',
+                                    '15:00', '15:30',
+                                    '16:00', '16:30',
+                                    '17:00', '17:30',
+                                    '18:00', '18:30',
+                                    '19:00', '19:30',
+                                    '20:00', '20:30',
+                                    '21:00', '21:30',
+                                    '22:00', '22:30',
+                                    '23:00', '23:30']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Voltios (V)'
+                                }
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: false
+                                }
+                            },
+                            series: [{
+                                name: 'Humedad',
+                                data: {{ ultimasHum }}
+                            }]
+                        });
+                    </script>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <!-- /.col -->
+            <div class="col-12 col-sm-6  col-md-6">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-thermometer-empty"></i></span>
+                    <div id="container5" style="min-width: 800px; height: 400px; margin: 0 auto"></div>
+                    <script type="text/javascript">
+                        Highcharts.chart('container5', {
+                            chart: {
+                                type: 'line'
+                            },
+                            title: {
+                                text: 'Temperatura Gabinete últimas 24Hrs'
+                            },
+                            subtitle: {
+                                text: 'Juno'
+                            },
+                            xAxis: {
+                                categories: [
+                                    '00:00', '00:30',
+                                    '01:00', '01:30',
+                                    '02:00', '02:30',
+                                    '03:00', '03:30',
+                                    '04:00', '04:30',
+                                    '05:00', '05:30',
+                                    '06:00', '06:30',
+                                    '07:00', '07:30',
+                                    '08:00', '08:30',
+                                    '09:00', '09:30',
+                                    '10:00', '10:30',
+                                    '11:00', '11:30',
+                                    '12:00', '12:30',
+                                    '13:00', '13:30',
+                                    '14:00', '14:30',
+                                    '15:00', '15:30',
+                                    '16:00', '16:30',
+                                    '17:00', '17:30',
+                                    '18:00', '18:30',
+                                    '19:00', '19:30',
+                                    '20:00', '20:30',
+                                    '21:00', '21:30',
+                                    '22:00', '22:30',
+                                    '23:00', '23:30']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Centigradors (°C)'
+                                }
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: false
+                                }
+                            },
+                            series: [{
+                                name: 'Temperatura',
+                                data: {{ ultimasGab }}
+                            }]
+                        });
+                    </script>
+
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <!-- fix for small devices only -->
+            <div class="clearfix hidden-md-up"></div>
+        </div>
+        <!-- /.row -->
     </div>
-    <!-- /.card -->
-    </div>
-    </div>
-    <!-- /.row -->
-    </div>
-    <!--/. container-fluid -->
 </section>
 
 

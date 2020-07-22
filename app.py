@@ -10,6 +10,10 @@ from flask_mail import Mail, Message
 import json
 from time import time
 import numpy as np
+import csv
+from datetime import date
+import time
+import datetime
 
 
 app = Flask(__name__)
@@ -81,6 +85,18 @@ class todo(db.Model):
     hora = db.Column(db.Time())
     fecha = db.Column(db.Date())
 
+class juno(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    temperatura = db.Column(db.Float())
+    humedad = db.Column(db.Float())
+    canal1 = db.Column(db.Float())
+    canal2 = db.Column(db.Float())
+    canal3 = db.Column(db.Float())
+    canal4 = db.Column(db.Float())
+    tempGabinete = db.Column(db.Float())
+    hora = db.Column(db.Time())
+    fecha = db.Column(db.Date())
+
 class regresion(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     x1 = db.Column(db.Float())
@@ -92,6 +108,115 @@ class regresion(db.Model):
     x1x2 = db.Column(db.Float())
     x2x2 = db.Column(db.Float())
     yy = db.Column(db.Float())
+
+def ConvertirHora(hora,minuntos,segundos):
+    resultado1 = hora * 3600
+    resultado2 = minuntos * 60
+    respuesta = resultado1 + resultado2 + segundos
+    return respuesta
+
+def promedios(datos, anio):
+    tempe = [0,0,0,0,0,0,0,0,0,0,0,0]
+    hume = [0,0,0,0,0,0,0,0,0,0,0,0]
+    trans = [0,0,0,0,0,0,0,0,0,0,0,0]
+    gab = [0,0,0,0,0,0,0,0,0,0,0,0]
+    cont = [0,0,0,0,0,0,0,0,0,0,0,0]
+    temperatura = [0,0,0,0,0,0,0,0,0,0,0,0]
+    humedad = [0,0,0,0,0,0,0,0,0,0,0,0]
+    Tx = [0,0,0,0,0,0,0,0,0,0,0,0]
+    TempGab = [0,0,0,0,0,0,0,0,0,0,0,0]
+    for dato in datos:
+        if ((dato.fecha >= date(year=anio, month=1, day =1)) and (dato.fecha <= date(year=anio, month=1, day =31))):  #Enero
+            tempe[0] = tempe[0] + dato.temperatura
+            hume[0] = hume[0] + dato.humedad
+            trans[0] = trans[0] + dato.canal1
+            gab[0] = gab[0] + dato.tempGabinete
+            cont[0] = cont[0] + 1
+        if ((dato.fecha >= date(year=anio, month=2, day =1)) and (dato.fecha <= date(year=anio, month=2, day =28))):  #Febrero
+            tempe[1] = tempe[1] + dato.temperatura
+            hume[1] = hume[1] + dato.humedad
+            trans[1] = trans[1] + dato.canal1
+            gab[1] = gab[1] + dato.tempGabinete
+            cont[1] = cont[1] + 1
+        if ((dato.fecha >= date(year=anio, month=3, day =1)) and (dato.fecha <= date(year=anio, month=3, day =31))):  #Marzo
+            tempe[2] = tempe[2] + dato.temperatura
+            hume[2] = hume[2] + dato.humedad
+            trans[2] = trans[2] + dato.canal1
+            gab[2] = gab[2] + dato.tempGabinete
+            cont[2] = cont[2] + 1
+        if ((dato.fecha >= date(year=anio, month=4, day =1)) and (dato.fecha <= date(year=anio, month=4, day =30))):  #Abril
+            tempe[3] = tempe[3] + dato.temperatura
+            hume[3] = hume[3] + dato.humedad
+            trans[3] = trans[3] + dato.canal1
+            gab[3] = gab[3] + dato.tempGabinete
+            cont[3] = cont[3] + 1
+        if ((dato.fecha >= date(year=anio, month=5, day =1)) and (dato.fecha <= date(year=anio, month=5, day =31))):  #Mayo
+            tempe[4] = tempe[4] + dato.temperatura
+            hume[4] = hume[4] + dato.humedad
+            trans[4] = trans[4] + dato.canal1
+            gab[4] = gab[4] + dato.tempGabinete
+            cont[4] = cont[4] + 1
+        if ((dato.fecha >= date(year=anio, month=6, day =1)) and (dato.fecha <= date(year=anio, month=6, day =30))):   #Junio
+            tempe[5] = tempe[5] + dato.temperatura
+            hume[5] = hume[5] + dato.humedad
+            trans[5] = trans[5] + dato.canal1
+            gab[5] = gab[5] + dato.tempGabinete
+            cont[5] = cont[5] + 1
+        if ((dato.fecha >= date(year=anio, month=7, day =1)) and (dato.fecha <= date(year=anio, month=7, day =31))):  #Julio
+            tempe[6] = tempe[6] + dato.temperatura
+            hume[6] = hume[6] + dato.humedad
+            trans[6] = trans[6] + dato.canal1
+            gab[6] = gab[6] + dato.tempGabinete
+            cont[6] = cont[6] + 1
+        if ((dato.fecha >= date(year=anio, month=8, day =1)) and (dato.fecha <= date(year=anio, month=8, day =31))):  #Agosto
+            tempe[7] = tempe[7] + dato.temperatura
+            hume[7] = hume[7] + dato.humedad
+            trans[7] = trans[7] + dato.canal1
+            gab[7] = gab[7] + dato.tempGabinete
+            cont[7] = cont[7] + 1
+        if ((dato.fecha >= date(year=anio, month=9, day =1)) and (dato.fecha <= date(year=anio, month=9, day =30))):  #Septiembre
+            tempe[8] = tempe[8] + dato.temperatura
+            hume[8] = hume[8] + dato.humedad
+            trans[8] = trans[8] + dato.canal1
+            gab[8] = gab[8] + dato.tempGabinete
+            cont[8] = cont[8] + 1
+        if ((dato.fecha >= date(year=anio, month=10, day =1)) and (dato.fecha <= date(year=anio, month=10, day =31))):  #Octubre
+            tempe[9] = tempe[9] + dato.temperatura
+            hume[9] = hume[9] + dato.humedad
+            trans[9] = trans[9] + dato.canal1
+            gab[9] = gab[9] + dato.tempGabinete
+            cont[9] = cont[9] + 1
+        if ((dato.fecha >= date(year=anio, month=11, day =1)) and (dato.fecha <= date(year=anio, month=11, day =30))):  #Noviembre
+            tempe[10] = tempe[10] + dato.temperatura
+            hume[10] = hume[10] + dato.humedad
+            trans[10] = trans[10] + dato.canal1
+            gab[10] = gab[10] + dato.tempGabinete
+            cont[10] = cont[10] + 1
+        if ((dato.fecha >= date(year=anio, month=12, day =1)) and (dato.fecha <= date(year=anio, month=12, day =31))):  #Diciembre
+            tempe[11] = tempe[11] + dato.temperatura
+            hume[11] = hume[11] + dato.humedad
+            trans[11] = trans[11] + dato.canal1
+            gab[11] = gab[11] + dato.tempGabinete
+            cont[11] = cont[11] + 1
+    for x in range(11):
+        if (tempe[x] > 0):
+            temperatura[x] = tempe[x] / cont[x]
+        else:
+            temperatura[x] = 0
+        if(hume[x] > 0):
+            humedad[x] = hume[x] / cont[x]
+        else:
+            humedad[x] = 0
+        if(trans[x] > 0):
+            Tx[x] = trans[x] / cont[x]
+        else:
+            Tx[x] = 0
+        if(gab[x] > 0):
+            TempGab[x] = gab[x] / cont[x]
+        else:
+            TempGab[x] = 0
+    return temperatura,humedad,Tx, TempGab
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -112,7 +237,34 @@ class RegisterForm(FlaskForm):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', name = current_user.nombre, notificaciones = 0, titulo = "DASHBOARD TUTI")
+    Txultimas = []
+    tempUltima = []
+    humUltima = []
+    tG = []
+    datos = todo.query.all()
+    anio = int(time.strftime("%Y"))
+    PromTemp,PromHum,PromTx,tempGab = promedios(datos,anio)
+    ultimas_24hrs = (datetime.date.today()) - datetime.timedelta(days=1)
+    ahoras = todo.query.filter_by(fecha = str(ultimas_24hrs))
+    for x in ahoras:
+        tempUltima.append(x.temperatura)
+        humUltima.append(x.humedad)
+        Txultimas.append(x.canal1)
+        tG.append(x.tempGabinete)
+    #return render_template('index.html', name = current_user.nombre, notificaciones = 0, titulo = "DASHBOARD TUTI")
+    return render_template(
+        'index.html', 
+        name = current_user.nombre, 
+        temp = PromTemp, 
+        hum = PromHum, 
+        Tx = PromTx, 
+        TempGab = tempGab, 
+        ultimasTx = Txultimas, 
+        ultimasTemp = tempUltima, 
+        ultimasHum = humUltima,
+        ultimasGab = tG,
+        notificaciones = 0,
+        titulo = "DASHBOARD TUTI")
 
 @app.route('/datos', methods=["GET", "POST"])
 def data1():
@@ -121,6 +273,7 @@ def data1():
     contador = 0
     for alarma in Alarmas:
         contador += 1
+    tiempo = ConvertirHora(int(time.strftime("%H")),int(time.strftime("%M")),int(time.strftime("%S")))
     data = [datos.temperatura,
             datos.humedad,
             datos.canal1,
@@ -129,7 +282,7 @@ def data1():
             datos.canal4,
             datos.tempGabinete,
             contador,
-            (time() - 14400) * 1000]
+            (tiempo * 1000)]
     response = make_response(json.dumps(data))
     response.content_type = 'application/json'
     return response
@@ -400,9 +553,93 @@ def Regresion():
 
 @app.errorhandler(404)
 def not_found(e):
-    Alarmas = alarmas.query.filter_by(estado='activo').all()
+    #Alarmas = alarmas.query.filter_by(estado='activo').all()
     return render_template("404.html", titulo = "Error 404 No encontrado", name = current_user.nombre)   
     
+@app.route('/cargardatos')
+def uploadcsv():
+    return render_template("VcargaJuno.html", titulo = "Cargar datos de Juno", name = current_user.nombre)
 
+@app.route('/upload',methods = ['POST'])
+def upload_route_summary():
+    if request.method == 'POST':
+        data =[]
+        # Crear variable donde subira el contenido del archivo
+        f = request.files['fileupload']  
+        #Guardar informacion en un string
+        fstring = f.read()
+        #Codificar el texto en UTF-8
+        text = fstring.decode("UTF-8")
+        for row in csv.DictReader(text.splitlines(), fieldnames=['id', 'temperatura', 'humedad', 'ch1', 'ch2', 'ch3', 'ch4', 'tempGabinete', 'hora', 'fecha']):
+            data.append([item[1] for item in row.items()])
+        if data:
+            DatosJuno = juno.query.all()
+            if DatosJuno:
+                juno.query.delete()
+                db.session.commit()
+                for aux in data:
+                    nuevoRegistro = juno(
+                        id = aux[0],
+                        temperatura = aux[1],
+                        humedad = aux[2],
+                        canal1 = aux[3],
+                        canal2 = aux[4],
+                        canal3 = aux[5],
+                        canal4 = aux[6],
+                        tempGabinete = aux[7],
+                        hora = aux[8],
+                        fecha = aux[9]
+                    )
+                    db.session.add(nuevoRegistro)
+                db.session.commit()
+            else:
+                for x in data:
+                    nuevoRegistro = juno(
+                        id = x[0],
+                        temperatura = x[1],
+                        humedad = x[2],
+                        canal1 = x[3],
+                        canal2 = x[4],
+                        canal3 = x[5],
+                        canal4 = x[6],
+                        tempGabinete = x[7],
+                        hora = x[8],
+                        fecha = x[9]
+                    )
+                    db.session.add(nuevoRegistro)
+                db.session.commit()
+        else:
+            return render_template('VcargaJuno.html', mensaje = 'El archivo .csv esta vacio', name = current_user.nombre, titulo = "Cargar datos de Juno")
+    return render_template('VcargaJuno.html', mensaje = 'Se guardaron todos los datos correctamente', name = current_user.nombre, titulo = "Cargar datos de Juno")
+
+@app.route('/dashjuno')
+def dashjuno():
+    Txultimas = []
+    tempUltima = []
+    humUltima = []
+    tG = []
+    datos = juno.query.all()
+    anio = int(time.strftime("%Y"))
+    PromTemp,PromHum,PromTx,tempGab = promedios(datos,anio)
+    ultimas_24hrs = (datetime.date.today()) - datetime.timedelta(days=1)
+    ahoras = juno.query.filter_by(fecha = str(ultimas_24hrs))
+    for x in ahoras:
+        tempUltima.append(x.temperatura)
+        humUltima.append(x.humedad)
+        Txultimas.append(x.canal1)
+        tG.append(x.tempGabinete)
+    return render_template(
+        'Vdashboardjuno.html', 
+        name = current_user, 
+        titulo = 'DASHBOARD JUNO', 
+        temp = PromTemp, 
+        hum = PromHum, 
+        Tx = PromTx, 
+        TempGab = tempGab, 
+        ultimasTx = Txultimas, 
+        ultimasTemp = tempUltima, 
+        ultimasHum = humUltima,
+        ultimasGab = tG)
+        
 if __name__ == '__main__':
     app.run(debug=True, host = '0.0.0.0')
