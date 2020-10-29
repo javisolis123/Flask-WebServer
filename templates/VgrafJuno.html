@@ -130,7 +130,7 @@
     
                                         // Get the data. The contents of the data file can be viewed at
                                         Highcharts.ajax({
-                                            url: '/datosJSON/' + document.getElementById('fecha1').value,
+                                            url: '/juno/datosJSON/' + document.getElementById('fecha1').value,
                                             dataType: 'text',
                                             success: function (activity) {
     
@@ -148,7 +148,7 @@
     
                                                     Highcharts.chart(chartDiv, {
                                                         chart: {
-                                                            marginLeft: 60, // Keep all charts left aligned
+                                                            marginLeft: 40, // Keep all charts left aligned
                                                             spacingTop: 20,
                                                             spacingBottom: 20
                                                         },

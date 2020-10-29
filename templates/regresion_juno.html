@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<script src="{{url_for('static', filename='plugins/code/highcharts.js')}}"></script>
+<script src="{{url_for('static', filename='plugins/code/modules/exporting.js')}}"></script>
+<section class="content p-4 col-md-auto">
+    <div class="container-fluid col-md-auto">
+        <div class="container-fluid">
+            <div class="row">
+                <!--/.col (right) -->
+                <div class="col-md-4">
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <div class="btn-group">
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <form action="/graf/regresionjuno" method="post">
+                            <div class="form-group">
+                                <input type="text" name="temperatura" class="form-control" placeholder="Temperatura">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="humedad" class="form-control" placeholder="Humedad">
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" name="ESTIMAR" class="form-control btn-success" value="ESTIMAR">
+                            </div>
+                            <div class="form-group">
+                                <label></label>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <div class="btn-group">
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        {% if TamJuno > 0 %}
+                            {% if determinante != 0 %}
+                                <div class="form-group">
+                                    <label> Regresión Lineal Multiple</label>
+                                    y = {{ Respuesta.0 }} + {{ Respuesta.1 }}X1 + {{ Respuesta.2 }}X2
+                                </div>
+                            {% endif %}
+                            {% if determinante == 0 %}
+                                <div class="form-group">
+                                    <label> Regresión Lineal Multiple</label>
+                                    NO TIENE SOLUCIÓN
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if TamJuno == 0 %}
+                            <div class="form-group">
+                                <label> DEBES CARGAR PRIMERO LOS DATOS DE JUNO</label>
+                                
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            {% if TamJuno > 0 %}
+                {% if metodo == "post" %}   
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <div class="btn-group">
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        {% if determinante != 0 %}
+                            <div class="form-group">
+                                <label> Regresión Lineal Multiple</label>
+                                y = {{ resultado_regresion }}
+                            </div>
+                        {% endif %}
+                        {% if determinante == 0 %}
+                            <div class="form-group">
+                                <label> Regresión Lineal Multiple</label>
+                                NO TIENE SOLUCIÓN
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                {% endif %}  
+            {% endif %}    
+            
+            {% if TamJuno == 0 %}
+            <div class="form-group">
+                <label> DEBES CARGAR PRIMERO LOS DATOS DE JUNO</label>
+            {% endif %} 
+            </div>
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+
+        <!-- /.card -->
+    </div>
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+
+
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{{url_for('static', filename='plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- Select2 -->
+<script src="{{url_for('static', filename='plugins/select2/js/select2.full.min.js')}}"></script>
+<!-- Bootstrap4 Duallistbox -->
+<script
+    src="{{url_for('static', filename='plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js')}}"></script>
+<!-- InputMask -->
+<script src="{{url_for('static', filename='plugins/moment/moment.min.js')}}"></script>
+<script src="{{url_for('static', filename='plugins/inputmask/min/jquery.inputmask.bundle.min.js')}}"></script>
+<!-- date-range-picker -->
+<script src="{{url_for('static', filename='plugins/daterangepicker/daterangepicker.js')}}"></script>
+<!-- bootstrap color picker -->
+<script src="{{url_for('static', filename='plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js')}}"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script
+    src="{{url_for('static', filename='plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
+<!-- Bootstrap Switch -->
+<script src="{{url_for('static', filename='plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{url_for('static', filename='dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{url_for('static', filename='dist/js/demo.js')}}"></script>
+<!-- Page script -->
+<script>
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2()
+
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
+
+        //Datemask dd/mm/yyyy
+        $('#datemask').inputmask('yyyy/mm/dd', { 'placeholder': 'yyyy/mm/dd' })
+        //Datemask2 mm/dd/yyyy
+        $('#datemask2').inputmask('yyyy/mm/dd', { 'placeholder': 'yyyy/mm/dd' })
+        //Money Euro
+        $('[data-mask]').inputmask()
+
+        //Date range picker
+        $('#reservation').daterangepicker()
+        //Date range picker with time picker
+        $('#reservationtime').daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 30,
+            locale: {
+                format: 'YYYY/MM/DD hh:mm A'
+            }
+        })
+        //Date range as a button
+        $('#daterange-btn').daterangepicker(
+            {
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+            function (start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+            }
+        )
+
+        //Timepicker
+        $('#timepicker').datetimepicker({
+            format: 'yyyy/mm/dd'
+        })
+
+        //Bootstrap Duallistbox
+        $('.duallistbox').bootstrapDualListbox()
+
+        //Colorpicker
+        $('.my-colorpicker1').colorpicker()
+        //color picker with addon
+        $('.my-colorpicker2').colorpicker()
+
+        $('.my-colorpicker2').on('colorpickerChange', function (event) {
+            $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+        });
+
+        $("input[data-bootstrap-switch]").each(function () {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+
+    })
+</script>
+<script>
+    function comprobar(obj) {
+        if (obj.checked) {
+
+            document.getElementById('ip').style.display = "";
+        } else {
+
+            document.getElementById('ip').style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

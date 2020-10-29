@@ -7,88 +7,9 @@
     <div class="container-fluid col-md-auto">
         <div class="container-fluid">
             <div class="row">
-                <!-- right column -->
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body" id="container">
-                      
-                    </div>
-                        
-                        <script type="text/javascript">
-                            Highcharts.chart('container', {
-                                chart: {
-                                    type: 'scatter',
-                                    zoomType: 'xy'
-                                },
-                                title: {
-                                    text: 'Temperatura Vs Potencia de recepción'
-                                },
-                                subtitle: {
-                                    text: 'Source: Heinz  2003'
-                                },
-                                xAxis: {
-                                    title: {
-                                        enabled: true,
-                                        text: 'Temperatura (°C)'
-                                    },
-                                    startOnTick: true,
-                                    endOnTick: true,
-                                    showLastLabel: true
-                                },
-                                yAxis: {
-                                    title: {
-                                        text: 'Pot Rx (V)'
-                                    }
-                                },
-                                legend: {
-                                    layout: 'vertical',
-                                    align: 'left',
-                                    verticalAlign: 'top',
-                                    x: 100,
-                                    y: 70,
-                                    floating: true,
-                                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-                                    borderWidth: 1
-                                },
-                                plotOptions: {
-                                    scatter: {
-                                        marker: {
-                                            radius: 5,
-                                            states: {
-                                                hover: {
-                                                    enabled: true,
-                                                    lineColor: 'rgb(100,100,100)'
-                                                }
-                                            }
-                                        },
-                                        states: {
-                                            hover: {
-                                                marker: {
-                                                    enabled: false
-                                                }
-                                            }
-                                        },
-                                        tooltip: {
-                                            headerFormat: '<b>{series.name}</b><br>',
-                                            pointFormat: '{point.x} °C, {point.y} V'
-                                        }
-                                    }
-                                },
-                                series: [{
-                                    name: 'Temperatura',
-                                    color: 'rgba(223, 83, 83, .5)',
-                                    data: {{ temp }}
-
-                                    }]
-                                });
-
-                        </script>
-                    </div>
-                    <!-- /.card -->
-                </div>
                 <!--/.col (right) -->
                 <div class="col-md-4">
-                <div class="card">
+                    <div class="card card-primary">
                     <div class="card-header">
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -111,10 +32,10 @@
                                 <input type="text" name="humedad" class="form-control" placeholder="Humedad">
                             </div>
                             <div class="form-group">
-                                <input type="submit" name="ESTIMAR" class="form-control btn-primary" value="ESTIMAR">
+                                <input type="submit" name="ESTIMAR" class="form-control btn-success" value="ESTIMAR">
                             </div>
                             <div class="form-group">
-                                <label>ecuacion</label>
+                                <label></label>
                             </div>
                         </form>
                     </div>
@@ -122,7 +43,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="card">
+                <div class="card card-primary">
                     <div class="card-header">
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -137,58 +58,54 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        {% if  aux != 0%}
-                            {% if determinante != 0 %}
-                                <div class="form-group">
-                                    <label>Promedio Temperatura (X1): </label>
-                                    {{ x1_prom }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Promedio Humedad (X2): </label>
-                                    {{ x2_prom }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Promedio Potencia de Recepción (Y): </label>
-                                    {{ y_prom }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Temperatura: </label>
-                                    {{ tempe }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Humedad: </label>
-                                    {{ hume }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Ecuacion Cálculada: </label>
-                                    y = {{ resp.0 }} + {{ resp.1 }}X1 + {{ resp.2 }}X2
-                                </div>
-                                <div class="form-group">
-                                    <label>Resultado: </label>
-                                    {{ result_aproximado }}
-                                </div>
-                                {% if porcentaje != 0 %}
-                                    <div class="form-group">
-                                        <label>Probabilidad: </label>
-                                        {{ porcentaje }}
-                                    </div>
-                                {% endif %}
-                                {% if porcentaje == 0 %}
-                                    <div class="form-group">
-                                        <label>No Existen coincidencias</label>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                            {% if determinante == 0 %}
-                                <div class="form-group">
-                                    <h1>No tiene Solución</h1>
-                                </div>
-                            {% endif %}
+                        {% if determinante != 0 %}
+                            <div class="form-group">
+                                <label> Regresión Lineal Multiple</label>
+                                y = {{ Respuesta.0 }} + {{ Respuesta.1 }}X1 + {{ Respuesta.2 }}X2
+                            </div>
+                        {% endif %}
+                        {% if determinante == 0 %}
+                            <div class="form-group">
+                                <label> Regresión Lineal Multiple</label>
+                                NO TIENE SOLUCIÓN
+                            </div>
                         {% endif %}
                     </div>
                     <!-- /.card-body -->
                 </div>
             </div>
+            {% if metodo == "post" %}   
+            <div class="card card-primary">
+                <div class="card-header">
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                        </div>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    {% if determinante != 0 %}
+                        <div class="form-group">
+                            <label> Regresión Lineal Multiple</label>
+                            y = {{ resultado_regresion }}
+                        </div>
+                    {% endif %}
+                    {% if determinante == 0 %}
+                        <div class="form-group">
+                            <label> Regresión Lineal Multiple</label>
+                            NO TIENE SOLUCIÓN
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- /.card-body -->
+            </div>
+            {% endif %}        
             </div>
             <!-- /.row -->
         </div><!-- /.container-fluid -->
